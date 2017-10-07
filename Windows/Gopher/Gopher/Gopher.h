@@ -37,6 +37,8 @@ private:
 	bool _lTriggerPrevious = false;
 	bool _rTriggerPrevious = false;
 
+	DWORD lastSentValue = NULL;
+
 	//Mouse Clicks
 	DWORD CONFIG_MOUSE_LEFT = NULL;
 	DWORD CONFIG_MOUSE_RIGHT = NULL;
@@ -47,6 +49,23 @@ private:
 	DWORD CONFIG_DISABLE = NULL;
 	DWORD CONFIG_DISABLE_VIBRATION = NULL;
 	DWORD CONFIG_SPEED_CHANGE = NULL;
+
+	//Thumb stick bindings
+	DWORD GAMEPAD_LEFT_THUMB_UP_1 = NULL;
+	DWORD GAMEPAD_LEFT_THUMB_UP_2 = NULL;
+	DWORD GAMEPAD_LEFT_THUMB_UP_3 = NULL;
+	DWORD GAMEPAD_LEFT_THUMB_UP_4 = NULL;
+
+	DWORD GAMEPAD_LEFT_THUMB_DOWN_1 = NULL;
+	DWORD GAMEPAD_LEFT_THUMB_DOWN_2 = NULL;
+	DWORD GAMEPAD_LEFT_THUMB_DOWN_3 = NULL;
+	DWORD GAMEPAD_LEFT_THUMB_DOWN_4 = NULL;
+
+	DWORD GAMEPAD_LEFT_THUMB_LEFT = NULL;
+
+	DWORD GAMEPAD_LEFT_THUMB_RIGHT = NULL;
+
+	DWORD GAMEPAD_LEFT_THUMB_RESET = NULL;
 
 	//Gamepad bindings
 	DWORD GAMEPAD_DPAD_UP = NULL;
@@ -88,6 +107,8 @@ public:
 	void setWindowVisibility(const bool& hidden) const;
 
 	float getDelta(short tx);
+
+	void handleThumbStick();
 
 	void handleMouseMovement();
 

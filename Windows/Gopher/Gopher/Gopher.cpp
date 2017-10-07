@@ -1,6 +1,8 @@
 #include "Gopher.h"
 #include "ConfigFile.h"
 
+using namespace std;
+
 void inputKeyboard(WORD cmd, DWORD flag)
 {
 	INPUT input;
@@ -52,6 +54,22 @@ void Gopher::loadConfigFile()
 	CONFIG_SPEED_CHANGE = strtol(cfg.getValueOfKey<std::string>("CONFIG_SPEED_CHANGE").c_str(), 0, 0);
 
 	//Controller bindings
+	GAMEPAD_LEFT_THUMB_UP_1 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_UP_1").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_UP_2 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_UP_2").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_UP_3 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_UP_3").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_UP_4 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_UP_4").c_str(), 0, 0);
+
+	GAMEPAD_LEFT_THUMB_DOWN_1 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_DOWN_1").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_DOWN_2 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_DOWN_2").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_DOWN_3 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_DOWN_3").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_DOWN_4 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_DOWN_4").c_str(), 0, 0);
+
+	GAMEPAD_LEFT_THUMB_LEFT = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_LEFT").c_str(), 0, 0);
+
+	GAMEPAD_LEFT_THUMB_RIGHT = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RIGHT").c_str(), 0, 0);
+
+	GAMEPAD_LEFT_THUMB_RESET = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RESET").c_str(), 0, 0);
+
 	GAMEPAD_DPAD_UP = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_DPAD_UP").c_str(), 0, 0);
 	GAMEPAD_DPAD_DOWN = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_DPAD_DOWN").c_str(), 0, 0);
 	GAMEPAD_DPAD_LEFT = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_DPAD_LEFT").c_str(), 0, 0);
@@ -89,17 +107,17 @@ void Gopher::loop() {
 	//Vibration
 	handleVibrationButton();
 
-	handleMouseMovement();
-	handleScrolling();
-
-	//Mouse functions
-	if (CONFIG_MOUSE_LEFT)
-		mapMouseClick(CONFIG_MOUSE_LEFT, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
-	if (CONFIG_MOUSE_RIGHT)
-		mapMouseClick(CONFIG_MOUSE_RIGHT, MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP);
-	if (CONFIG_MOUSE_MIDDLE)
-		mapMouseClick(CONFIG_MOUSE_MIDDLE, MOUSEEVENTF_MIDDLEDOWN, MOUSEEVENTF_MIDDLEUP);
-
+//	handleMouseMovement();
+//	handleScrolling();
+//
+//	//Mouse functions
+//	if (CONFIG_MOUSE_LEFT)
+//		mapMouseClick(CONFIG_MOUSE_LEFT, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP);
+//	if (CONFIG_MOUSE_RIGHT)
+//		mapMouseClick(CONFIG_MOUSE_RIGHT, MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP);
+//	if (CONFIG_MOUSE_MIDDLE)
+//		mapMouseClick(CONFIG_MOUSE_MIDDLE, MOUSEEVENTF_MIDDLEDOWN, MOUSEEVENTF_MIDDLEUP);
+//
 	//Hides the console
 	if (CONFIG_HIDE)
 	{
@@ -131,6 +149,10 @@ void Gopher::loop() {
 		}
 	}
 
+	//Handle thumbstick controls
+	handleThumbStick();
+
+
 	//Set all controller keys.
 	handleTriggers(GAMEPAD_TRIGGER_LEFT, GAMEPAD_TRIGGER_RIGHT);
 	if (GAMEPAD_DPAD_UP)
@@ -161,6 +183,185 @@ void Gopher::loop() {
 		mapKeyboard(XINPUT_GAMEPAD_X, GAMEPAD_X);
 	if (GAMEPAD_Y)
 		mapKeyboard(XINPUT_GAMEPAD_Y, GAMEPAD_Y);
+}
+
+/*
+* This method checks if the thumb stick is in a certain position
+* and if this position is different from the last it will
+* send an keyboard input and update the last sent position.
+*
+* In the case of moving the thumbstick up and down these
+* values are check whether they are within a certain
+* range. If the new range differs from the old one
+* it will send an keyboard input and update the last
+* send position.
+*/
+void Gopher::handleThumbStick() {
+
+	//Store thumbstick coords in variables
+	short tx = _currentState.Gamepad.sThumbLX;
+	short ty = _currentState.Gamepad.sThumbLY;
+
+	//Check the dominant axis
+	if (abs(tx) > abs(ty)) {
+
+		//Check if value is in dead zone
+		if (abs(tx) <= DEAD_ZONE) {
+
+			//Check if reset value was already sent
+			if (lastSentValue != 0) {
+
+				//Send reset value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RESET);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RESET);
+
+				//Set last send value
+				lastSentValue = 0;
+
+			}
+
+		}
+		//Check which side the thumbstick is moved to
+		else if (tx < 0 && lastSentValue != GAMEPAD_LEFT_THUMB_LEFT) {
+
+			//Send left value
+			inputKeyboardDown(GAMEPAD_LEFT_THUMB_LEFT);
+			inputKeyboardUp(GAMEPAD_LEFT_THUMB_LEFT);
+
+			//Set last send value
+			lastSentValue = GAMEPAD_LEFT_THUMB_LEFT;
+
+		}
+		else if (tx > 0 && lastSentValue != GAMEPAD_LEFT_THUMB_RIGHT) {
+
+			//Send right value
+			inputKeyboardDown(GAMEPAD_LEFT_THUMB_RIGHT);
+			inputKeyboardUp(GAMEPAD_LEFT_THUMB_RIGHT);
+
+			//Set last send value
+			lastSentValue = GAMEPAD_LEFT_THUMB_RIGHT;
+
+		}
+
+	}
+	else {
+
+		//Check if value is in dead zone
+		if (abs(ty) <= DEAD_ZONE) {
+
+			//Check if reset value was already sent
+			if (lastSentValue != 0) {
+
+				//Send reset value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RESET);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RESET);
+
+				//Set last send value
+				lastSentValue = 0;
+
+			}
+
+		}
+		//Check which side the thumbstick is moved to
+		else if (ty < 0) {
+
+			//Check if absolute ty is in first range
+			if (abs(ty) > 9000 && abs(ty) < 14942 && lastSentValue != GAMEPAD_LEFT_THUMB_DOWN_1) {
+
+				//Send first down value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_DOWN_1);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_DOWN_1);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_DOWN_1;
+
+			}
+			//Check if absolute ty is in second range
+			else if (abs(ty) >= 14942 && abs(ty) < 20884 && lastSentValue != GAMEPAD_LEFT_THUMB_DOWN_2) {
+
+				//Send second down value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_DOWN_2);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_DOWN_2);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_DOWN_2;
+
+			}
+			//Check if absolute ty is in third range
+			else if (abs(ty) >= 20884 && abs(ty) < 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_DOWN_3) {
+
+				//Send third down value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_DOWN_3);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_DOWN_3);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_DOWN_3;
+
+			}
+			//Check if absolute ty is in fourth range
+			else if (abs(ty) >= 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_DOWN_4) {
+
+				//Send fourth down value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_DOWN_4);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_DOWN_4);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_DOWN_4;
+
+			}
+
+		}
+		else if (ty > 0) {
+
+			//Check if absolute ty is in first range
+			if (abs(ty) > 9000 && abs(ty) < 14942 && lastSentValue != GAMEPAD_LEFT_THUMB_UP_1) {
+
+				//Send first up value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_UP_1);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_UP_1);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_UP_1;
+
+			}
+			//Check if absolute ty is in second range
+			else if (abs(ty) >= 14942 && abs(ty) < 20884 && lastSentValue != GAMEPAD_LEFT_THUMB_UP_2) {
+
+				//Send second up value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_UP_2);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_UP_2);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_UP_2;
+
+			}
+			//Check if absolute ty is in third range
+			else if (abs(ty) >= 20884 && abs(ty) < 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_UP_3) {
+
+				//Send third up value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_UP_3);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_UP_3);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_UP_3;
+
+			}
+			//Check if absolute ty is in fourth range
+			else if (abs(ty) >= 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_UP_4) {
+
+				//Send fourth up value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_UP_4);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_UP_4);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_UP_4;
+
+			}
+
+		}
+
+	}
+
 }
 
 void Gopher::pulseVibrate(const int duration, const int l, const int r) const
