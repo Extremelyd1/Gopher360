@@ -64,9 +64,15 @@ void Gopher::loadConfigFile()
 	GAMEPAD_LEFT_THUMB_DOWN_3 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_DOWN_3").c_str(), 0, 0);
 	GAMEPAD_LEFT_THUMB_DOWN_4 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_DOWN_4").c_str(), 0, 0);
 
-	GAMEPAD_LEFT_THUMB_LEFT = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_LEFT").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_LEFT_1 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_LEFT_1").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_LEFT_2 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_LEFT_2").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_LEFT_3 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_LEFT_3").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_LEFT_4 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_LEFT_4").c_str(), 0, 0);
 
-	GAMEPAD_LEFT_THUMB_RIGHT = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RIGHT").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_RIGHT_1 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RIGHT_1").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_RIGHT_2 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RIGHT_2").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_RIGHT_3 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RIGHT_3").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_RIGHT_4 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RIGHT_4").c_str(), 0, 0);
 
 	GAMEPAD_LEFT_THUMB_RESET = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RESET").c_str(), 0, 0);
 
@@ -222,24 +228,100 @@ void Gopher::handleThumbStick() {
 
 		}
 		//Check which side the thumbstick is moved to
-		else if (tx < 0 && lastSentValue != GAMEPAD_LEFT_THUMB_LEFT) {
+		else if (tx < 0) {
 
-			//Send left value
-			inputKeyboardDown(GAMEPAD_LEFT_THUMB_LEFT);
-			inputKeyboardUp(GAMEPAD_LEFT_THUMB_LEFT);
+			//Check if absolute tx is in first range
+			if (abs(tx) > 9000 && abs(tx) < 14942 && lastSentValue != GAMEPAD_LEFT_THUMB_LEFT_1) {
 
-			//Set last send value
-			lastSentValue = GAMEPAD_LEFT_THUMB_LEFT;
+				//Send first down value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_LEFT_1);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_LEFT_1);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_LEFT_1;
+
+			}
+			//Check if absolute tx is in second range
+			else if (abs(tx) >= 14942 && abs(tx) < 20884 && lastSentValue != GAMEPAD_LEFT_THUMB_LEFT_2) {
+
+				//Send second down value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_LEFT_2);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_LEFT_2);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_LEFT_2;
+
+			}
+			//Check if absolute tx is in third range
+			else if (abs(tx) >= 20884 && abs(tx) < 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_LEFT_3) {
+
+				//Send third down value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_LEFT_3);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_LEFT_3);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_LEFT_3;
+
+			}
+			//Check if absolute tx is in fourth range
+			else if (abs(tx) >= 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_LEFT_4) {
+
+				//Send fourth down value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_LEFT_4);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_LEFT_4);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_LEFT_4;
+
+			}
 
 		}
-		else if (tx > 0 && lastSentValue != GAMEPAD_LEFT_THUMB_RIGHT) {
+		else if (tx > 0) {
 
-			//Send right value
-			inputKeyboardDown(GAMEPAD_LEFT_THUMB_RIGHT);
-			inputKeyboardUp(GAMEPAD_LEFT_THUMB_RIGHT);
+			//Check if absolute tx is in first range
+			if (abs(tx) > 9000 && abs(tx) < 14942 && lastSentValue != GAMEPAD_LEFT_THUMB_RIGHT_1) {
 
-			//Set last send value
-			lastSentValue = GAMEPAD_LEFT_THUMB_RIGHT;
+				//Send first up value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RIGHT_1);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RIGHT_1);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_RIGHT_1;
+
+			}
+			//Check if absolute tx is in second range
+			else if (abs(tx) >= 14942 && abs(tx) < 20884 && lastSentValue != GAMEPAD_LEFT_THUMB_RIGHT_2) {
+
+				//Send second up value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RIGHT_2);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RIGHT_2);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_RIGHT_2;
+
+			}
+			//Check if absolute tx is in third range
+			else if (abs(tx) >= 20884 && abs(tx) < 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_RIGHT_3) {
+
+				//Send third up value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RIGHT_3);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RIGHT_3);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_RIGHT_3;
+
+			}
+			//Check if absolute tx is in fourth range
+			else if (abs(tx) >= 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_RIGHT_4) {
+
+				//Send fourth up value
+				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RIGHT_4);
+				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RIGHT_4);
+
+				//Set last send value
+				lastSentValue = GAMEPAD_LEFT_THUMB_RIGHT_4;
+
+			}
 
 		}
 
