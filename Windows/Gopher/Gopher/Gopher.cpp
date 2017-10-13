@@ -156,7 +156,8 @@ void Gopher::loop() {
 	}
 
 	//Handle thumbstick controls
-	handleThumbStick();
+	handleLeftThumbStick();
+	handleRightThumbStick();
 
 
 	//Set all controller keys.
@@ -192,7 +193,7 @@ void Gopher::loop() {
 }
 
 /*
-* This method checks if the thumb stick is in a certain position
+* This method checks if the left thumb stick is in a certain position
 * and if this position is different from the last it will
 * send an keyboard input and update the last sent position.
 *
@@ -202,7 +203,7 @@ void Gopher::loop() {
 * it will send an keyboard input and update the last
 * send position.
 */
-void Gopher::handleThumbStick() {
+void Gopher::handleLeftThumbStick() {
 
 	//Store thumbstick coords in variables
 	short tx = _currentState.Gamepad.sThumbLX;
@@ -215,14 +216,14 @@ void Gopher::handleThumbStick() {
 		if (abs(tx) <= DEAD_ZONE) {
 
 			//Check if reset value was already sent
-			if (lastSentValue != 0) {
+			if (lastLThumbVal != 0) {
 
 				//Send reset value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RESET);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RESET);
 
 				//Set last send value
-				lastSentValue = 0;
+				lastLThumbVal = 0;
 
 			}
 
@@ -231,47 +232,47 @@ void Gopher::handleThumbStick() {
 		else if (tx < 0) {
 
 			//Check if absolute tx is in first range
-			if (abs(tx) > 9000 && abs(tx) < 14942 && lastSentValue != GAMEPAD_LEFT_THUMB_LEFT_1) {
+			if (abs(tx) > 9000 && abs(tx) < 14942 && lastLThumbVal != GAMEPAD_LEFT_THUMB_LEFT_1) {
 
 				//Send first down value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_LEFT_1);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_LEFT_1);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_LEFT_1;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_LEFT_1;
 
 			}
 			//Check if absolute tx is in second range
-			else if (abs(tx) >= 14942 && abs(tx) < 20884 && lastSentValue != GAMEPAD_LEFT_THUMB_LEFT_2) {
+			else if (abs(tx) >= 14942 && abs(tx) < 20884 && lastLThumbVal != GAMEPAD_LEFT_THUMB_LEFT_2) {
 
 				//Send second down value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_LEFT_2);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_LEFT_2);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_LEFT_2;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_LEFT_2;
 
 			}
 			//Check if absolute tx is in third range
-			else if (abs(tx) >= 20884 && abs(tx) < 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_LEFT_3) {
+			else if (abs(tx) >= 20884 && abs(tx) < 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_LEFT_3) {
 
 				//Send third down value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_LEFT_3);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_LEFT_3);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_LEFT_3;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_LEFT_3;
 
 			}
 			//Check if absolute tx is in fourth range
-			else if (abs(tx) >= 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_LEFT_4) {
+			else if (abs(tx) >= 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_LEFT_4) {
 
 				//Send fourth down value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_LEFT_4);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_LEFT_4);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_LEFT_4;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_LEFT_4;
 
 			}
 
@@ -279,47 +280,47 @@ void Gopher::handleThumbStick() {
 		else if (tx > 0) {
 
 			//Check if absolute tx is in first range
-			if (abs(tx) > 9000 && abs(tx) < 14942 && lastSentValue != GAMEPAD_LEFT_THUMB_RIGHT_1) {
+			if (abs(tx) > 9000 && abs(tx) < 14942 && lastLThumbVal != GAMEPAD_LEFT_THUMB_RIGHT_1) {
 
 				//Send first up value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RIGHT_1);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RIGHT_1);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_RIGHT_1;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_RIGHT_1;
 
 			}
 			//Check if absolute tx is in second range
-			else if (abs(tx) >= 14942 && abs(tx) < 20884 && lastSentValue != GAMEPAD_LEFT_THUMB_RIGHT_2) {
+			else if (abs(tx) >= 14942 && abs(tx) < 20884 && lastLThumbVal != GAMEPAD_LEFT_THUMB_RIGHT_2) {
 
 				//Send second up value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RIGHT_2);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RIGHT_2);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_RIGHT_2;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_RIGHT_2;
 
 			}
 			//Check if absolute tx is in third range
-			else if (abs(tx) >= 20884 && abs(tx) < 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_RIGHT_3) {
+			else if (abs(tx) >= 20884 && abs(tx) < 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_RIGHT_3) {
 
 				//Send third up value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RIGHT_3);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RIGHT_3);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_RIGHT_3;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_RIGHT_3;
 
 			}
 			//Check if absolute tx is in fourth range
-			else if (abs(tx) >= 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_RIGHT_4) {
+			else if (abs(tx) >= 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_RIGHT_4) {
 
 				//Send fourth up value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RIGHT_4);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RIGHT_4);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_RIGHT_4;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_RIGHT_4;
 
 			}
 
@@ -332,14 +333,14 @@ void Gopher::handleThumbStick() {
 		if (abs(ty) <= DEAD_ZONE) {
 
 			//Check if reset value was already sent
-			if (lastSentValue != 0) {
+			if (lastLThumbVal != 0) {
 
 				//Send reset value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RESET);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RESET);
 
 				//Set last send value
-				lastSentValue = 0;
+				lastLThumbVal = 0;
 
 			}
 
@@ -348,47 +349,47 @@ void Gopher::handleThumbStick() {
 		else if (ty < 0) {
 
 			//Check if absolute ty is in first range
-			if (abs(ty) > 9000 && abs(ty) < 14942 && lastSentValue != GAMEPAD_LEFT_THUMB_DOWN_1) {
+			if (abs(ty) > 9000 && abs(ty) < 14942 && lastLThumbVal != GAMEPAD_LEFT_THUMB_DOWN_1) {
 
 				//Send first down value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_DOWN_1);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_DOWN_1);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_DOWN_1;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_DOWN_1;
 
 			}
 			//Check if absolute ty is in second range
-			else if (abs(ty) >= 14942 && abs(ty) < 20884 && lastSentValue != GAMEPAD_LEFT_THUMB_DOWN_2) {
+			else if (abs(ty) >= 14942 && abs(ty) < 20884 && lastLThumbVal != GAMEPAD_LEFT_THUMB_DOWN_2) {
 
 				//Send second down value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_DOWN_2);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_DOWN_2);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_DOWN_2;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_DOWN_2;
 
 			}
 			//Check if absolute ty is in third range
-			else if (abs(ty) >= 20884 && abs(ty) < 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_DOWN_3) {
+			else if (abs(ty) >= 20884 && abs(ty) < 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_DOWN_3) {
 
 				//Send third down value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_DOWN_3);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_DOWN_3);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_DOWN_3;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_DOWN_3;
 
 			}
 			//Check if absolute ty is in fourth range
-			else if (abs(ty) >= 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_DOWN_4) {
+			else if (abs(ty) >= 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_DOWN_4) {
 
 				//Send fourth down value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_DOWN_4);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_DOWN_4);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_DOWN_4;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_DOWN_4;
 
 			}
 
@@ -396,47 +397,164 @@ void Gopher::handleThumbStick() {
 		else if (ty > 0) {
 
 			//Check if absolute ty is in first range
-			if (abs(ty) > 9000 && abs(ty) < 14942 && lastSentValue != GAMEPAD_LEFT_THUMB_UP_1) {
+			if (abs(ty) > 9000 && abs(ty) < 14942 && lastLThumbVal != GAMEPAD_LEFT_THUMB_UP_1) {
 
 				//Send first up value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_UP_1);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_UP_1);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_UP_1;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_UP_1;
 
 			}
 			//Check if absolute ty is in second range
-			else if (abs(ty) >= 14942 && abs(ty) < 20884 && lastSentValue != GAMEPAD_LEFT_THUMB_UP_2) {
+			else if (abs(ty) >= 14942 && abs(ty) < 20884 && lastLThumbVal != GAMEPAD_LEFT_THUMB_UP_2) {
 
 				//Send second up value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_UP_2);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_UP_2);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_UP_2;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_UP_2;
 
 			}
 			//Check if absolute ty is in third range
-			else if (abs(ty) >= 20884 && abs(ty) < 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_UP_3) {
+			else if (abs(ty) >= 20884 && abs(ty) < 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_UP_3) {
 
 				//Send third up value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_UP_3);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_UP_3);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_UP_3;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_UP_3;
 
 			}
 			//Check if absolute ty is in fourth range
-			else if (abs(ty) >= 26826 && lastSentValue != GAMEPAD_LEFT_THUMB_UP_4) {
+			else if (abs(ty) >= 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_UP_4) {
 
 				//Send fourth up value
 				inputKeyboardDown(GAMEPAD_LEFT_THUMB_UP_4);
 				inputKeyboardUp(GAMEPAD_LEFT_THUMB_UP_4);
 
 				//Set last send value
-				lastSentValue = GAMEPAD_LEFT_THUMB_UP_4;
+				lastLThumbVal = GAMEPAD_LEFT_THUMB_UP_4;
+
+			}
+
+		}
+
+	}
+
+}
+
+/*
+* This method checks if the right thumb stick is in a certain position
+* and if this position is different from the last it will
+* send an keyboard input and update the last sent position.
+*/
+void Gopher::handleRightThumbStick() {
+
+	//Store thumbstick coords in variables
+	short tx = _currentState.Gamepad.sThumbRX;
+	short ty = _currentState.Gamepad.sThumbRY;
+
+	//Check the dominant axis
+	if (abs(tx) > abs(ty)) {
+
+		//Check if value is in dead zone
+		if (abs(tx) <= DEAD_ZONE) {
+
+			//Check if reset value was already sent
+			if (lastRThumbVal != 0) {
+
+				//Send reset value
+				inputKeyboardDown(GAMEPAD_RIGHT_THUMB_RESET);
+				inputKeyboardUp(GAMEPAD_RIGHT_THUMB_RESET);
+
+				//Set last send value
+				lastRThumbVal = 0;
+
+			}
+
+		}
+		//Check which side the thumbstick is moved to
+		else if (tx < 0) {
+
+			//Check if last value was not already this one
+			if (lastRThumbVal != GAMEPAD_RIGHT_THUMB_LEFT_1) {
+
+				//Send first down value
+				inputKeyboardDown(GAMEPAD_RIGHT_THUMB_LEFT_1);
+				inputKeyboardUp(GAMEPAD_RIGHT_THUMB_LEFT_1);
+
+				//Set last send value
+				lastRThumbVal = GAMEPAD_RIGHT_THUMB_LEFT_1;
+
+			}
+
+		}
+		else if (tx > 0) {
+
+			//Check if last value was not already this one
+			if (lastRThumbVal != GAMEPAD_RIGHT_THUMB_RIGHT_1) {
+
+				//Send first up value
+				inputKeyboardDown(GAMEPAD_RIGHT_THUMB_RIGHT_1);
+				inputKeyboardUp(GAMEPAD_RIGHT_THUMB_RIGHT_1);
+
+				//Set last send value
+				lastRThumbVal = GAMEPAD_RIGHT_THUMB_RIGHT_1;
+
+			}
+
+		}
+
+	}
+	else {
+
+		//Check if value is in dead zone
+		if (abs(ty) <= DEAD_ZONE) {
+
+			//Check if reset value was already sent
+			if (lastRThumbVal != 0) {
+
+				//Send reset value
+				inputKeyboardDown(GAMEPAD_RIGHT_THUMB_RESET);
+				inputKeyboardUp(GAMEPAD_RIGHT_THUMB_RESET);
+
+				//Set last send value
+				lastRThumbVal = 0;
+
+			}
+
+		}
+		//Check which side the thumbstick is moved to
+		else if (ty < 0) {
+
+			//Check if last value was not already this one
+			if (lastRThumbVal != GAMEPAD_RIGHT_THUMB_DOWN_1) {
+
+				//Send first down value
+				inputKeyboardDown(GAMEPAD_RIGHT_THUMB_DOWN_1);
+				inputKeyboardUp(GAMEPAD_RIGHT_THUMB_DOWN_1);
+
+				//Set last send value
+				lastRThumbVal = GAMEPAD_RIGHT_THUMB_DOWN_1;
+
+			}
+
+		}
+		else if (ty > 0) {
+
+			//Check if last value was not already this one
+			if (lastRThumbVal != GAMEPAD_RIGHT_THUMB_UP_1) {
+
+				//Send first up value
+				inputKeyboardDown(GAMEPAD_RIGHT_THUMB_UP_1);
+				inputKeyboardUp(GAMEPAD_RIGHT_THUMB_UP_1);
+
+				//Set last send value
+				lastRThumbVal = GAMEPAD_RIGHT_THUMB_UP_1;
 
 			}
 
