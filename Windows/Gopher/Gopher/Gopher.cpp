@@ -74,7 +74,17 @@ void Gopher::loadConfigFile()
 	GAMEPAD_LEFT_THUMB_RIGHT_3 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RIGHT_3").c_str(), 0, 0);
 	GAMEPAD_LEFT_THUMB_RIGHT_4 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RIGHT_4").c_str(), 0, 0);
 
-	GAMEPAD_LEFT_THUMB_RESET = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RESET").c_str(), 0, 0);
+	GAMEPAD_RIGHT_THUMB_RESET = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_RIGHT_THUMB_RESET").c_str(), 0, 0);
+
+	GAMEPAD_RIGHT_THUMB_UP = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_RIGHT_THUMB_UP").c_str(), 0, 0);
+
+	GAMEPAD_RIGHT_THUMB_DOWN = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_RIGHT_THUMB_DOWN").c_str(), 0, 0);
+
+	GAMEPAD_RIGHT_THUMB_LEFT = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_RIGHT_THUMB_LEFT").c_str(), 0, 0);
+
+	GAMEPAD_RIGHT_THUMB_RIGHT = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_RIGHT_THUMB_RIGHT").c_str(), 0, 0);
+
+	GAMEPAD_RIGHT_THUMB_RESET = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_RIGHT_THUMB_RESET").c_str(), 0, 0);
 
 	GAMEPAD_DPAD_UP = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_DPAD_UP").c_str(), 0, 0);
 	GAMEPAD_DPAD_DOWN = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_DPAD_DOWN").c_str(), 0, 0);
@@ -104,14 +114,14 @@ void Gopher::loop() {
 
 	_currentState = _controller->GetState();
 
-	handleDisableButton();
+//	handleDisableButton();
 	if (_disabled)
 	{
 		return;
 	}
 
 	//Vibration
-	handleVibrationButton();
+//	handleVibrationButton();
 
 //	handleMouseMovement();
 //	handleScrolling();
@@ -125,35 +135,35 @@ void Gopher::loop() {
 //		mapMouseClick(CONFIG_MOUSE_MIDDLE, MOUSEEVENTF_MIDDLEDOWN, MOUSEEVENTF_MIDDLEUP);
 //
 	//Hides the console
-	if (CONFIG_HIDE)
-	{
-		setXboxClickState(CONFIG_HIDE);
-		if (_xboxClickIsDown[CONFIG_HIDE])
-		{
-			toggleWindowVisibility();
-		}
-	}
+//	if (CONFIG_HIDE)
+//	{
+//		setXboxClickState(CONFIG_HIDE);
+//		if (_xboxClickIsDown[CONFIG_HIDE])
+//		{
+//			toggleWindowVisibility();
+//		}
+//	}
 
 	//Will change between the current speed values
-	setXboxClickState(CONFIG_SPEED_CHANGE);
-	if (_xboxClickIsDown[CONFIG_SPEED_CHANGE]) {
-
-		if (speed == SPEED_LOW)
-		{
-			speed = SPEED_MED;
-			pulseVibrate(400, 0, 3000);
-		}
-		else if (speed == SPEED_MED)
-		{
-			speed = SPEED_HIGH;
-			pulseVibrate(400, 0, 65000);
-		}
-		else if (speed == SPEED_HIGH)
-		{
-			speed = SPEED_LOW;
-			pulseVibrate(400, 0, 10000);
-		}
-	}
+//	setXboxClickState(CONFIG_SPEED_CHANGE);
+//	if (_xboxClickIsDown[CONFIG_SPEED_CHANGE]) {
+//
+//		if (speed == SPEED_LOW)
+//		{
+//			speed = SPEED_MED;
+//			pulseVibrate(400, 0, 3000);
+//		}
+//		else if (speed == SPEED_MED)
+//		{
+//			speed = SPEED_HIGH;
+//			pulseVibrate(400, 0, 65000);
+//		}
+//		else if (speed == SPEED_HIGH)
+//		{
+//			speed = SPEED_LOW;
+//			pulseVibrate(400, 0, 10000);
+//		}
+//	}
 
 	//Handle thumbstick controls
 	handleLeftThumbStick();
@@ -481,14 +491,14 @@ void Gopher::handleRightThumbStick() {
 		else if (tx < 0) {
 
 			//Check if last value was not already this one
-			if (lastRThumbVal != GAMEPAD_RIGHT_THUMB_LEFT_1) {
+			if (lastRThumbVal != GAMEPAD_RIGHT_THUMB_LEFT) {
 
 				//Send first down value
-				inputKeyboardDown(GAMEPAD_RIGHT_THUMB_LEFT_1);
-				inputKeyboardUp(GAMEPAD_RIGHT_THUMB_LEFT_1);
+				inputKeyboardDown(GAMEPAD_RIGHT_THUMB_LEFT);
+				inputKeyboardUp(GAMEPAD_RIGHT_THUMB_LEFT);
 
 				//Set last send value
-				lastRThumbVal = GAMEPAD_RIGHT_THUMB_LEFT_1;
+				lastRThumbVal = GAMEPAD_RIGHT_THUMB_LEFT;
 
 			}
 
@@ -496,14 +506,14 @@ void Gopher::handleRightThumbStick() {
 		else if (tx > 0) {
 
 			//Check if last value was not already this one
-			if (lastRThumbVal != GAMEPAD_RIGHT_THUMB_RIGHT_1) {
+			if (lastRThumbVal != GAMEPAD_RIGHT_THUMB_RIGHT) {
 
 				//Send first up value
-				inputKeyboardDown(GAMEPAD_RIGHT_THUMB_RIGHT_1);
-				inputKeyboardUp(GAMEPAD_RIGHT_THUMB_RIGHT_1);
+				inputKeyboardDown(GAMEPAD_RIGHT_THUMB_RIGHT);
+				inputKeyboardUp(GAMEPAD_RIGHT_THUMB_RIGHT);
 
 				//Set last send value
-				lastRThumbVal = GAMEPAD_RIGHT_THUMB_RIGHT_1;
+				lastRThumbVal = GAMEPAD_RIGHT_THUMB_RIGHT;
 
 			}
 
@@ -532,14 +542,14 @@ void Gopher::handleRightThumbStick() {
 		else if (ty < 0) {
 
 			//Check if last value was not already this one
-			if (lastRThumbVal != GAMEPAD_RIGHT_THUMB_DOWN_1) {
+			if (lastRThumbVal != GAMEPAD_RIGHT_THUMB_DOWN) {
 
 				//Send first down value
-				inputKeyboardDown(GAMEPAD_RIGHT_THUMB_DOWN_1);
-				inputKeyboardUp(GAMEPAD_RIGHT_THUMB_DOWN_1);
+				inputKeyboardDown(GAMEPAD_RIGHT_THUMB_DOWN);
+				inputKeyboardUp(GAMEPAD_RIGHT_THUMB_DOWN);
 
 				//Set last send value
-				lastRThumbVal = GAMEPAD_RIGHT_THUMB_DOWN_1;
+				lastRThumbVal = GAMEPAD_RIGHT_THUMB_DOWN;
 
 			}
 
@@ -547,14 +557,14 @@ void Gopher::handleRightThumbStick() {
 		else if (ty > 0) {
 
 			//Check if last value was not already this one
-			if (lastRThumbVal != GAMEPAD_RIGHT_THUMB_UP_1) {
+			if (lastRThumbVal != GAMEPAD_RIGHT_THUMB_UP) {
 
 				//Send first up value
-				inputKeyboardDown(GAMEPAD_RIGHT_THUMB_UP_1);
-				inputKeyboardUp(GAMEPAD_RIGHT_THUMB_UP_1);
+				inputKeyboardDown(GAMEPAD_RIGHT_THUMB_UP);
+				inputKeyboardUp(GAMEPAD_RIGHT_THUMB_UP);
 
 				//Set last send value
-				lastRThumbVal = GAMEPAD_RIGHT_THUMB_UP_1;
+				lastRThumbVal = GAMEPAD_RIGHT_THUMB_UP;
 
 			}
 
