@@ -74,7 +74,7 @@ void Gopher::loadConfigFile()
 	GAMEPAD_LEFT_THUMB_RIGHT_3 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RIGHT_3").c_str(), 0, 0);
 	GAMEPAD_LEFT_THUMB_RIGHT_4 = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RIGHT_4").c_str(), 0, 0);
 
-	GAMEPAD_RIGHT_THUMB_RESET = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_RIGHT_THUMB_RESET").c_str(), 0, 0);
+	GAMEPAD_LEFT_THUMB_RESET = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RESET").c_str(), 0, 0);
 
 	GAMEPAD_RIGHT_THUMB_UP = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_RIGHT_THUMB_UP").c_str(), 0, 0);
 
@@ -84,7 +84,7 @@ void Gopher::loadConfigFile()
 
 	GAMEPAD_RIGHT_THUMB_RIGHT = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_RIGHT_THUMB_RIGHT").c_str(), 0, 0);
 
-	GAMEPAD_RIGHT_THUMB_RESET = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_RIGHT_THUMB_RESET").c_str(), 0, 0);
+	GAMEPAD_RIGHT_THUMB_RESET = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_LEFT_THUMB_RESET").c_str(), 0, 0);
 
 	GAMEPAD_DPAD_UP = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_DPAD_UP").c_str(), 0, 0);
 	GAMEPAD_DPAD_DOWN = strtol(cfg.getValueOfKey<std::string>("GAMEPAD_DPAD_DOWN").c_str(), 0, 0);
@@ -166,9 +166,22 @@ void Gopher::loop() {
 //	}
 
 	//Handle thumbstick controls
-	handleLeftThumbStick();
+	if (!disableThumbStick)
+		handleLeftThumbStick();
+
 	handleRightThumbStick();
 
+	//Check forward toggle
+	setXboxClickState(XINPUT_GAMEPAD_LEFT_THUMB);
+	if (_xboxClickIsDown[XINPUT_GAMEPAD_LEFT_THUMB]) {
+		disableThumbStick = true;
+	}
+
+	if (_xboxClickIsUp[XINPUT_GAMEPAD_LEFT_THUMB]) {
+		cout << "Switched controls to " << (switchControls ? "normal" : "inversed") << endl;
+		disableThumbStick = false;
+		switchControls = !switchControls;
+	}
 
 	//Set all controller keys.
 	handleTriggers(GAMEPAD_TRIGGER_LEFT, GAMEPAD_TRIGGER_RIGHT);
@@ -184,8 +197,8 @@ void Gopher::loop() {
 		mapKeyboard(XINPUT_GAMEPAD_START, GAMEPAD_START);
 	if (GAMEPAD_BACK)
 		mapKeyboard(XINPUT_GAMEPAD_BACK, GAMEPAD_BACK);
-	if (GAMEPAD_LEFT_THUMB)
-		mapKeyboard(XINPUT_GAMEPAD_LEFT_THUMB, GAMEPAD_LEFT_THUMB);
+	//if (GAMEPAD_LEFT_THUMB)
+	//	mapKeyboard(XINPUT_GAMEPAD_LEFT_THUMB, GAMEPAD_LEFT_THUMB);
 	if (GAMEPAD_RIGHT_THUMB)
 		mapKeyboard(XINPUT_GAMEPAD_RIGHT_THUMB, GAMEPAD_RIGHT_THUMB);
 	if (GAMEPAD_LEFT_SHOULDER)
@@ -200,6 +213,66 @@ void Gopher::loop() {
 		mapKeyboard(XINPUT_GAMEPAD_X, GAMEPAD_X);
 	if (GAMEPAD_Y)
 		mapKeyboard(XINPUT_GAMEPAD_Y, GAMEPAD_Y);
+}
+
+DWORD Gopher::getControlFromName(DWORD name) {
+
+	if (switchControls) {
+
+		if (name == GAMEPAD_LEFT_THUMB_DOWN_1) {
+			return GAMEPAD_LEFT_THUMB_UP_1;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_DOWN_2) {
+			return GAMEPAD_LEFT_THUMB_UP_2;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_DOWN_3) {
+			return GAMEPAD_LEFT_THUMB_UP_3;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_DOWN_4) {
+			return GAMEPAD_LEFT_THUMB_UP_4;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_UP_1) {
+			return GAMEPAD_LEFT_THUMB_DOWN_1;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_UP_2) {
+			return GAMEPAD_LEFT_THUMB_DOWN_2;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_UP_3) {
+			return GAMEPAD_LEFT_THUMB_DOWN_3;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_UP_4) {
+			return GAMEPAD_LEFT_THUMB_DOWN_4;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_LEFT_1) {
+			return GAMEPAD_LEFT_THUMB_RIGHT_1;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_LEFT_2) {
+			return GAMEPAD_LEFT_THUMB_RIGHT_2;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_LEFT_3) {
+			return GAMEPAD_LEFT_THUMB_RIGHT_3;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_LEFT_4) {
+			return GAMEPAD_LEFT_THUMB_RIGHT_4;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_RIGHT_1) {
+			return GAMEPAD_LEFT_THUMB_LEFT_1;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_RIGHT_2) {
+			return GAMEPAD_LEFT_THUMB_LEFT_2;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_RIGHT_3) {
+			return GAMEPAD_LEFT_THUMB_LEFT_3;
+		}
+		else if (name == GAMEPAD_LEFT_THUMB_RIGHT_4) {
+			return GAMEPAD_LEFT_THUMB_LEFT_4;
+		}
+
+	}
+	else {
+		return name;
+	}
+
 }
 
 /*
@@ -242,47 +315,47 @@ void Gopher::handleLeftThumbStick() {
 		else if (tx < 0) {
 
 			//Check if absolute tx is in first range
-			if (abs(tx) > 9000 && abs(tx) < 14942 && lastLThumbVal != GAMEPAD_LEFT_THUMB_LEFT_1) {
+			if (abs(tx) > 9000 && abs(tx) < 14942 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_1)) {
 
 				//Send first down value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_LEFT_1);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_LEFT_1);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_1));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_1));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_LEFT_1;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_1);
 
 			}
 			//Check if absolute tx is in second range
-			else if (abs(tx) >= 14942 && abs(tx) < 20884 && lastLThumbVal != GAMEPAD_LEFT_THUMB_LEFT_2) {
+			else if (abs(tx) >= 14942 && abs(tx) < 20884 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_2)) {
 
 				//Send second down value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_LEFT_2);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_LEFT_2);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_2));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_2));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_LEFT_2;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_2);
 
 			}
 			//Check if absolute tx is in third range
-			else if (abs(tx) >= 20884 && abs(tx) < 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_LEFT_3) {
+			else if (abs(tx) >= 20884 && abs(tx) < 26826 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_3)) {
 
 				//Send third down value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_LEFT_3);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_LEFT_3);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_3));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_3));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_LEFT_3;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_3);
 
 			}
 			//Check if absolute tx is in fourth range
-			else if (abs(tx) >= 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_LEFT_4) {
+			else if (abs(tx) >= 26826 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_4)) {
 
 				//Send fourth down value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_LEFT_4);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_LEFT_4);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_4));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_4));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_LEFT_4;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_LEFT_4);
 
 			}
 
@@ -290,47 +363,47 @@ void Gopher::handleLeftThumbStick() {
 		else if (tx > 0) {
 
 			//Check if absolute tx is in first range
-			if (abs(tx) > 9000 && abs(tx) < 14942 && lastLThumbVal != GAMEPAD_LEFT_THUMB_RIGHT_1) {
+			if (abs(tx) > 9000 && abs(tx) < 14942 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_1)) {
 
 				//Send first up value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RIGHT_1);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RIGHT_1);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_1));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_1));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_RIGHT_1;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_1);
 
 			}
 			//Check if absolute tx is in second range
-			else if (abs(tx) >= 14942 && abs(tx) < 20884 && lastLThumbVal != GAMEPAD_LEFT_THUMB_RIGHT_2) {
+			else if (abs(tx) >= 14942 && abs(tx) < 20884 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_2)) {
 
 				//Send second up value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RIGHT_2);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RIGHT_2);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_2));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_2));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_RIGHT_2;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_2);
 
 			}
 			//Check if absolute tx is in third range
-			else if (abs(tx) >= 20884 && abs(tx) < 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_RIGHT_3) {
+			else if (abs(tx) >= 20884 && abs(tx) < 26826 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_3)) {
 
 				//Send third up value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RIGHT_3);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RIGHT_3);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_3));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_3));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_RIGHT_3;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_3);
 
 			}
 			//Check if absolute tx is in fourth range
-			else if (abs(tx) >= 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_RIGHT_4) {
+			else if (abs(tx) >= 26826 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_4)) {
 
 				//Send fourth up value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_RIGHT_4);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_RIGHT_4);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_4));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_4));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_RIGHT_4;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_RIGHT_4);
 
 			}
 
@@ -359,47 +432,47 @@ void Gopher::handleLeftThumbStick() {
 		else if (ty < 0) {
 
 			//Check if absolute ty is in first range
-			if (abs(ty) > 9000 && abs(ty) < 14942 && lastLThumbVal != GAMEPAD_LEFT_THUMB_DOWN_1) {
+			if (abs(ty) > 9000 && abs(ty) < 14942 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_1)) {
 
 				//Send first down value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_DOWN_1);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_DOWN_1);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_1));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_1));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_DOWN_1;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_1);
 
 			}
 			//Check if absolute ty is in second range
-			else if (abs(ty) >= 14942 && abs(ty) < 20884 && lastLThumbVal != GAMEPAD_LEFT_THUMB_DOWN_2) {
+			else if (abs(ty) >= 14942 && abs(ty) < 20884 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_2)) {
 
 				//Send second down value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_DOWN_2);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_DOWN_2);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_2));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_2));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_DOWN_2;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_2);
 
 			}
 			//Check if absolute ty is in third range
-			else if (abs(ty) >= 20884 && abs(ty) < 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_DOWN_3) {
+			else if (abs(ty) >= 20884 && abs(ty) < 26826 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_3)) {
 
 				//Send third down value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_DOWN_3);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_DOWN_3);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_3));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_3));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_DOWN_3;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_3);
 
 			}
 			//Check if absolute ty is in fourth range
-			else if (abs(ty) >= 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_DOWN_4) {
+			else if (abs(ty) >= 26826 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_4)) {
 
 				//Send fourth down value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_DOWN_4);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_DOWN_4);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_4));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_4));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_DOWN_4;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_DOWN_4);
 
 			}
 
@@ -407,47 +480,47 @@ void Gopher::handleLeftThumbStick() {
 		else if (ty > 0) {
 
 			//Check if absolute ty is in first range
-			if (abs(ty) > 9000 && abs(ty) < 14942 && lastLThumbVal != GAMEPAD_LEFT_THUMB_UP_1) {
+			if (abs(ty) > 9000 && abs(ty) < 14942 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_UP_1)) {
 
 				//Send first up value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_UP_1);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_UP_1);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_UP_1));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_UP_1));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_UP_1;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_UP_1);
 
 			}
 			//Check if absolute ty is in second range
-			else if (abs(ty) >= 14942 && abs(ty) < 20884 && lastLThumbVal != GAMEPAD_LEFT_THUMB_UP_2) {
+			else if (abs(ty) >= 14942 && abs(ty) < 20884 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_UP_2)) {
 
 				//Send second up value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_UP_2);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_UP_2);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_UP_2));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_UP_2));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_UP_2;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_UP_2);
 
 			}
 			//Check if absolute ty is in third range
-			else if (abs(ty) >= 20884 && abs(ty) < 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_UP_3) {
+			else if (abs(ty) >= 20884 && abs(ty) < 26826 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_UP_3)) {
 
 				//Send third up value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_UP_3);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_UP_3);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_UP_3));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_UP_3));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_UP_3;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_UP_3);
 
 			}
 			//Check if absolute ty is in fourth range
-			else if (abs(ty) >= 26826 && lastLThumbVal != GAMEPAD_LEFT_THUMB_UP_4) {
+			else if (abs(ty) >= 26826 && lastLThumbVal != getControlFromName(GAMEPAD_LEFT_THUMB_UP_4)) {
 
 				//Send fourth up value
-				inputKeyboardDown(GAMEPAD_LEFT_THUMB_UP_4);
-				inputKeyboardUp(GAMEPAD_LEFT_THUMB_UP_4);
+				inputKeyboardDown(getControlFromName(GAMEPAD_LEFT_THUMB_UP_4));
+				inputKeyboardUp(getControlFromName(GAMEPAD_LEFT_THUMB_UP_4));
 
 				//Set last send value
-				lastLThumbVal = GAMEPAD_LEFT_THUMB_UP_4;
+				lastLThumbVal = getControlFromName(GAMEPAD_LEFT_THUMB_UP_4);
 
 			}
 

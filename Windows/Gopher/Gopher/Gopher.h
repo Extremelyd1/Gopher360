@@ -37,6 +37,10 @@ private:
 	bool _lTriggerPrevious = false;
 	bool _rTriggerPrevious = false;
 
+	bool switchControls = false;
+
+	bool disableThumbStick = false;
+
 	DWORD lastLThumbVal = NULL;
 	DWORD lastRThumbVal = NULL;
 
@@ -124,6 +128,8 @@ public:
 	void setWindowVisibility(const bool& hidden) const;
 
 	float getDelta(short tx);
+
+	DWORD getControlFromName(DWORD name);
 
 	void handleLeftThumbStick();
 
