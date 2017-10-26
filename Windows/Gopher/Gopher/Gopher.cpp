@@ -243,30 +243,8 @@ DWORD Gopher::getControlFromName(DWORD name) {
 		else if (name == GAMEPAD_LEFT_THUMB_UP_4) {
 			return GAMEPAD_LEFT_THUMB_DOWN_4;
 		}
-		else if (name == GAMEPAD_LEFT_THUMB_LEFT_1) {
-			return GAMEPAD_LEFT_THUMB_RIGHT_1;
-		}
-		else if (name == GAMEPAD_LEFT_THUMB_LEFT_2) {
-			return GAMEPAD_LEFT_THUMB_RIGHT_2;
-		}
-		else if (name == GAMEPAD_LEFT_THUMB_LEFT_3) {
-			return GAMEPAD_LEFT_THUMB_RIGHT_3;
-		}
-		else if (name == GAMEPAD_LEFT_THUMB_LEFT_4) {
-			return GAMEPAD_LEFT_THUMB_RIGHT_4;
-		}
-		else if (name == GAMEPAD_LEFT_THUMB_RIGHT_1) {
-			return GAMEPAD_LEFT_THUMB_LEFT_1;
-		}
-		else if (name == GAMEPAD_LEFT_THUMB_RIGHT_2) {
-			return GAMEPAD_LEFT_THUMB_LEFT_2;
-		}
-		else if (name == GAMEPAD_LEFT_THUMB_RIGHT_3) {
-			return GAMEPAD_LEFT_THUMB_LEFT_3;
-		}
-		else if (name == GAMEPAD_LEFT_THUMB_RIGHT_4) {
-			return GAMEPAD_LEFT_THUMB_LEFT_4;
-		}
+
+		return name;
 
 	}
 	else {
